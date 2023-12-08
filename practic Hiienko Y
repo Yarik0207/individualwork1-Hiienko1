@@ -1,0 +1,286 @@
+# indivi
+#include <iostream>
+using namespace std;
+
+enum  Emploi {  //амплуа игрока - тип перечислення
+    GK,           // - goalkeeper, 
+    CB,           // - centre back 
+    LB,           // – left back
+    RB,           // – right back 
+    MF,           // - midfielder, 
+    CF,           // - centre-forward
+    LW,           //  left winger  
+    RW,           //  right winger,
+    // forward дает ошибку видимо это какое то ключ слово
+};
+
+struct Player
+{
+ std::string name;
+ unsigned age;
+ unsigned games;
+ unsigned goals;
+ int id;               // personal id number of a player in list
+ Emploi role;
+ Player *next;
+ // далі функції що реализовані в моєї структурі 
+/*
+ Player(string name,unsigned age, unsigned games, unsigned goals, Emploi role)
+ {  // конструктор 
+    this->name = name;
+    this->age = age;
+    this->games = games;
+    this->goals = goals;
+    this->role = role; 
+ }
+ Player() { };             // перегрузка конструктора ( якщо без параметрів)
+    void set_role(Emploi r){
+       this->role=r;   
+    } 
+    void set_games( unsigned x){
+       this->games=x;   
+    }
+*/
+
+     void print()
+    {   // вивести на екран всі поля структури
+        std::cout << "output structure Football player: " << std::endl;
+        std::cout << "Name: " << name << "\tAge: " << age << "\tgames: "<< games;
+        std::cout << "\tgoals: "<< goals << "\tRole: "<< role<< std::endl;
+    }
+     
+
+void set_data(string name,unsigned age, unsigned games, unsigned goals, Emploi role)
+ {
+     this->name = name;
+    this->age = age;
+    this->games = games;
+    this->goals = goals;
+    this->role = role;
+ }
+
+};
+
+class List{
+
+public:
+  List() : begin( nullptr ), count(0), idc(0) {    };
+  ~List(){   Clear();  };
+  
+  Player* formLIFO_1()
+  { // повертає вказівник на голову списку
+      return begin;
+  };   
+  int GetCount() {
+      return count;
+  }
+      
+  int formFIFO_2(string name,unsigned age, unsigned games, unsigned goals, Emploi role)
+  {     //додати до списку нового гравця    
+      Player* unit = new Player;
+      unit->name = name;
+      unit->age = age;
+      unit->games = games;
+      unit->goals = goals;
+      unit->role = role;
+      unit->id = ++idc;    
+      unit->next = nullptr;   // це крайній елемент, за ним не має 
+      if (begin == nullptr)
+    //  if (!count)
+      { //  якщо це перший гравець взагалі
+        begin = unit;
+      }
+      else
+      {
+        Player* t = Move(count-1);  // Перейти на элемент у позиції index-1 
+        t->next= unit;        // наступний  для елементу у позиції index-1
+      }
+     // count++; 
+      return ++count;
+  }
+  int formLIFO_2(string name,unsigned age, unsigned games, unsigned goals, Emploi role)
+  {     //додати до списку нового гравця    
+      Player* unit = new Player;
+      unit->name = name;
+      unit->age = age;
+      unit->games = games;
+      unit->goals = goals;
+      unit->role = role;
+      unit->id = ++idc;    
+      unit->next = nullptr;   // це крайній елемент, за ним не має 
+      
+      unit->next = begin;
+      begin = unit;
+      
+    //  count++; 
+    return ++count;
+  }
+  void Print(string msg)
+  {    //   друкувати список всіх гравців  
+    cout << msg << ": " << endl;
+    if (count == 0) // если список пуст
+    {
+       cout << "List is empty." << endl;
+       return;
+    }
+    Player* t = begin;
+    std::cout << "No:\tID: Name: \tAge: \tgames:\tgoals:\tEmploi:"<<std::endl;
+    //while (t != nullptr)
+    for(int i = 0 ; i < count; i++)
+    {
+      std::cout << i <<"\t"<< t->id << "   " << t->name << " \t" << t->age << "\t"<< t->games;
+      std::cout << "\t"<< t->goals << "\t"<< t->role<<std::endl;
+      t = t->next;
+    }
+    cout << endl;
+  }
+  void Print2(string msg, int index)
+  {    //   друкувати список гравців тільки хто має < index ігор    
+    cout << msg << "who played less than " << index <<" games: " << endl;
+    if (count == 0) // если список пуст
+    {
+       cout << "List is empty." << endl;
+       return;
+    }
+    Player* t = begin;
+    std::cout << "No:\tID: Name: \tAge: \tgames:\tgoals:\tEmploi:"<<std::endl;
+    //while (t != nullptr)
+    for(int i = 0 ; i < count; i++)
+    {
+      if ( t->games < index){
+        std::cout << i <<"\t"<< t->id << "   " << t->name << " \t" << t->age << "\t"<< t->games;
+        std::cout << "\t"<< t->goals << "\t"<< t->role<<std::endl;
+      }
+      t = t->next;
+    }
+    cout << endl;
+  }
+  int GetTopScorer()
+  {   // пошук кращого бомбардира зі списку
+    
+    if(count){
+        Player* top = begin;
+        Player* t = begin->next;
+        for(int i = 1; i < count; i++){
+            if (t->goals >= top->goals)
+               top = t;
+            t = t->next;   
+        }
+        cout<< "Top scorer:"<< endl;
+        cout<< "ID:" << top->id << " Name: "<< top->name << endl;
+        return top->goals;
+    }
+    else{
+        cout<< "there is not the top scorer."<< endl;
+        return 0;
+    }
+    
+  }
+  
+  void Del (int index)
+  {    // видалення  зі списку одного елементу з номером - index  
+   // cout << "Remove unit: "<< index << endl;
+    
+    if (!count|| index < 0|| index>=count ){
+      cout<< "wrong action: remove out of range element "<< endl;
+      return;  
+    }
+      
+    if (index == 0)
+    {
+      // випадок видалення 1го:
+      Player* t = begin;   // запомнить адрес первого элемента
+      begin = begin->next; // перейти на следующий элемент
+      delete t;            // освободить первый элемент
+    }
+    else
+    {
+      Player* t = Move(index - 1);  // Перейти на элемент в позиции index-1 
+      Player* t2 = t->next;        //  Запомнить удаляемый элемент
+      t->next = t2->next;     // указать следующий  для элемента в позиции index-1
+      delete t2;              // Удалить элемент на который указывает t2
+      t2 = nullptr;
+        
+    }
+    count--;
+  }
+  
+private:
+  // тут змінні класа
+  Player* begin;
+  int count;
+  unsigned idc; // it`s a counter of id numbers >= count 
+  
+   // тут приховані (внутришні) методи класа
+   void Clear()
+   {   // Метод, который удаляет все элементы
+      while (begin != nullptr)
+        Del(0);
+   }
+   Player* Move(int index)
+   {   // Внутренняя функция, которая перематывает на указанную позицию
+      if (count > 0) // если есть элементы в списке
+      {
+      // Перемотать на позицию index
+        Player* t = begin;
+        for (int i = 0; i < index; i++)
+          t = t->next;
+        return t;
+      }
+      return nullptr;
+   }
+};
+
+int main()
+{
+setlocale(LC_ALL, "ru");
+
+int c = 0 ;      // counter of List
+int gls = 0;
+int mgms = 5;  // for the task = 5  
+
+// створено список,але поки без гравців
+List L; 
+L.Print("L: ");
+
+// додати гравців у список (функція LIFO)
+L.formLIFO_2("Evgen", 24, 10, 1, CB );
+L.formLIFO_2("Nikita",19, 1, 0, MF);
+L.formLIFO_2("Anton", 22, 3, 1, LB);
+L.formLIFO_2("John",  20, 7, 2, MF);
+L.formLIFO_2("Mykhailo", 27, 11, 4, LW);
+L.formLIFO_2("Maxim", 20, 2, 0, CB);
+c = L.formLIFO_2("Artem",23, 9, 3, MF);    
+
+L.Print("L ");
+//cout <<" count"<< c << endl; 
+
+
+// додати гравців у список (функція FIFO)
+L.formFIFO_2("Sasha", 49, 7, 0, GK );
+L.formFIFO_2("Semen", 21, 10, 1, RB);
+L.formFIFO_2("Yaroslav", 18, 10, 12, CF);
+L.formFIFO_2("Sevan", 20, 12, 5, MF);
+L.formFIFO_2("Ivan", 22, 5, 11, LW);
+L.formFIFO_2("Коля", 20, 4, 0, LB);
+c = L.formFIFO_2("Maxim", 27, 12, 2, RW);
+
+L.Print("L ");
+//cout <<" count"<< c << endl; 
+
+//L.Del(4);      // видалити зі списку ігрока за індексом
+//L.Print("L ");
+
+// визначити кращого форварда:
+gls= L.GetTopScorer();
+cout << "goals scored = "<< gls << endl<< endl;
+
+// друкувати список всіх хто зіграв менше 5 ігор
+L.Print2("L  ", mgms);
+
+// функція повертає вказівник на голову списку
+Player *p1 = L.formLIFO_1();
+p1->print();
+
+return 0;
+}dualwork1-Hiienko1
