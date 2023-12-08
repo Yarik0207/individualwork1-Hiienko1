@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+
+class StackOfLists {
+private:
+    std::vector<std::vector<int>> arrayStack;
+
+public:
+    
+    void push(const std::vector<int>& list) {
+        arrayStack.push_back(list);
+    }
+
+    
+    void pop() {
+        if (!arrayStack.empty()) {
+            arrayStack.pop_back();
+        } else {
+            std::cout << "Stack is empty. Cannot pop.\n";
+        }
+    }
+
+    
+    std::vector<int> top() const {
+        if (!arrayStack.empty()) {
+            return arrayStack.back();
+        } else {
+            std::cout << "Stack is empty.\n";
+            return std::vector<int>();
+        }
+    }
+
+    
+    bool isEmpty() const {
+        return arrayStack.empty();
+    }
+
+    
+    std::size_t size() const {
+        return arrayStack.size();
+    }
+};
+
+int main() {
+    StackOfLists stack;
+
+    
+    stack.push({1, 2, 3});
+    stack.push({4, 5, 6});
+    stack.push({7, 8, 9});
+
+    
+    std::cout << "Stack size: " << stack.size() << "\n";
+
+    
+    std::cout << "Top of the stack: ";
+    for (int val : stack.top()) {
+        std::cout << val << " ";
+    }
+    std::cout << "\n";
+
+   
+    stack.pop();
+
+    
+    std::cout << "Stack size after pop: " << stack.size() << "\n";
+
+    return 0;
+}
