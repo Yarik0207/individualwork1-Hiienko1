@@ -1,0 +1,54 @@
+#include <iostream>
+
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int value) : data(value), prev(nullptr), next(nullptr) {}
+};
+
+// Функція для перевірки симетричності двоспрямованого списку
+bool isSymmetric(Node* head) {
+    if (!head) {
+        return true; // Порожній список є симетричним
+    }
+
+    // Порівняння значень елементів в прямому та зворотньому напрямку
+    Node* forward = head;
+    Node* backward = head;
+
+    while (forward->next) {
+        forward = forward->next;
+    }
+
+    while (forward != backward && forward->prev != backward) {
+        if (forward->data != backward->data) {
+            return false; // Знайдено непарне значення, список не є симетричним
+        }
+        forward = forward->prev;
+        backward = backward->next;
+    }
+
+    return true; // Значення у всіх відповідних парах співпадають
+}
+
+int main() {
+    // Приклад створення симетричного списку
+    Node* symmetricList = new Node(1);
+    symmetricList->next = new Node(2);
+    symmetricList->next->prev = symmetricList;
+    symmetricList->next->next = new Node(2);
+    symmetricList->next->next->prev = symmetricList->next;
+    symmetricList->next->next->next = new Node(1);
+    symmetricList->next->next->next->prev = symmetricList->next->next;
+
+    // Виклик функції перевірки симетричності та виведення результату
+    if (isSymmetric(symmetricList)) {
+        std::cout << "Список є симетричним." << std::endl;
+    } else {
+        std::cout << "Список не є симетричним." << std::endl;
+    }
+
+    return 0;
+}
