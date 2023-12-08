@@ -1,0 +1,84 @@
+#include <iostream>
+
+// Структура, що представляє елемент двоспрямованого списку
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+    
+    // Конструктор для зручності створення нового елементу
+    Node(int value) : data(value), prev(nullptr), next(nullptr) {}
+};
+
+// Клас для представлення двоспрямованого списку та операцій над ним
+class LinkedList {
+private:
+    Node* head; // Вказівник на початок списку
+public:
+    // Конструктор для ініціалізації пустого списку
+    LinkedList() : head(nullptr) {}
+
+    // Функція для додавання елементу в кінець списку
+    void append(int value) {
+        Node* newNode = new Node(value);
+        if (!head) {
+            // Якщо список порожній, новий елемент стає головою
+            head = newNode;
+        } else {
+            // Якщо список не порожній, шукаємо кінець і додаємо новий елемент
+            Node* current = head;
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+            newNode->prev = current;
+        }
+    }
+
+    // Функція для виведення елементів списку в прямому напрямку
+    void printForward() const {
+        Node* current = head;
+        while (current) {
+            std::cout << current->data << " ";
+            current = current->next;
+        }
+        std::cout << std::endl;
+    }
+
+    // Функція для виведення елементів списку в зворотньому напрямку
+    void printBackward() const {
+        Node* current = head;
+        while (current && current->next) {
+            current = current->next;
+        }
+        while (current) {
+            std::cout << current->data << " ";
+            current = current->prev;
+        }
+        std::cout << std::endl;
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    // Введення даних з клавіатури
+    int n, value;
+    std::cout << "Введіть кількість елементів списку: ";
+    std::cin >> n;
+
+    std::cout << "Введіть значення елементів:" << std::endl;
+    for (int i = 0; i < n; ++i) {
+        std::cin >> value;
+        list.append(value);
+    }
+
+    // Виведення елементів в обох напрямках
+    std::cout << "Елементи списку в прямому напрямку: ";
+    list.printForward();
+
+    std::cout << "Елементи списку в зворотньому напрямку: ";
+    list.printBackward();
+
+    return 0;
+}
