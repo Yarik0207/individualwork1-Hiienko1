@@ -1,0 +1,116 @@
+#include <iostream>
+#include <memory.h>
+#define INF 2100000000
+using namespace std;
+
+int i, j;
+int n = 0, rn = 0, source = 0;  // точка з номером це початок
+
+int b, e, dist, v;
+int* used;
+int* d;
+int** mass;    // матриця довжин ребер я кщореббра нема то довжина = INF
+
+int* funcCreatArr1D(int n){
+    return new int[n];
+}
+int** funcCreatArr2D(int n, int m){
+    int** a = new int*[n]; 
+    for(int i= 0; i < n; i++){
+        a[i] = funcCreatArr1D(m);
+    }
+    return a;
+}
+void freeMemArr(int* ar1, int * arD, int** ar2, int n){
+   delete [] ar1;
+   ar1 = nullptr;
+   delete [] arD;
+   arD = nullptr;
+   for(int i = 0; i < n; i ++){
+      delete [] ar2[i];
+   }
+    delete [] ar2;
+    ar2 = nullptr;
+}
+
+void Init(void)
+{    // ініціалізація масивів 
+  for(int i = 0; i < n; i++){
+      d[i] = INF;
+      used[i] = 0;   // 0 -all are not  includeded
+      for(int j = 0; j < n; j++){
+          if (i==j) mass[i][j] = 0;
+          else mass[i][j] =INF;
+      }
+     // mass[i][i] = 0;
+  }
+}
+void Relax(int i, int j)
+{  // балансування ребра між i та j вершинами
+    if (d[j] > d[i] + mass[i][j]){
+        d[j] = d[i] + mass[i][j];
+    }
+}
+int Find_Near (void)
+{  // пошук ще не доданої вершини з найменшим значенням d[i]
+    int num;
+    int min = 0.5*INF;
+    for(int i = 0; i< n; i++){
+        if(!used[i] && d[i] < min) {
+            min = d[i];
+            num = i;
+        }
+    }
+    return num;
+}
+
+int main()
+{
+   // ввод количество n и число ребер rn ;
+    while ( !n || !rn){
+        cout <<" input number of n (points) and r(ribs):";   
+        scanf("%d%d",&n,&rn);
+    }
+ //   Allocate memory on the heap for: *used, *d, **mass    
+    used = funcCreatArr1D(n);
+    d = funcCreatArr1D(n);
+    mass = funcCreatArr2D(n,n);
+// setting of Initial values     
+    Init();   
+ // ввод длин ребер между:  b- begin point fnd e -end point    
+    for( i = 0; i < rn; i++){
+      cout<<" input Begin , End and distance B-E:";
+      do{
+       scanf("%d%d%d",&b,&e,&dist);
+       if (b<1 || b > n || e<1 || e > n || dist <0 )
+           cout<<" incorrect input Begin ,End or distance B-E (!) Repeate:";
+      }while(!b||!e|| dist<0||b>n||e>n);   
+        mass[b-1][e-1] = dist;  
+    }
+   cout <<" input source (the origin point number) :";
+    scanf("%d",&source);    
+    d[source-1] = 0; 
+    for (i = 1; i < n; i++)
+    {
+      v = Find_Near();
+     // cout << " v= " << v+1<< endl;
+      for (j = 0; j < n; j++) {
+        if (!used[j]) Relax(v,j);
+      }
+      used[v] = 1;
+    }
+
+    cout<< "m- matrix of ribs:"<< endl;  
+    for (int i = 0; i < n ; i++){
+            for (int j = 0; j < n; j++)
+               printf("%10d ", mass[i][j]);
+        //   cout<< "m[" << i << "," << j << "] = " << m[i][j] << endl ;
+        cout<< endl;    
+    }
+    cout << "Grafh calculation results----------------"<< endl;
+    for (i = 1; i <= n; i++)
+      printf("From source %d to point %d distance is: %d\n",
+              source, i, d[i-1]);
+    freeMemArr(used, d, mass, n);
+return 0;
+}
